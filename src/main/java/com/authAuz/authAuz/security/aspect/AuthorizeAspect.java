@@ -20,6 +20,7 @@ import org.springframework.util.AntPathMatcher;
 import com.authAuz.authAuz.configuration.AppConfig;
 import com.authAuz.authAuz.security.annotation.Authorize;
 import com.authAuz.authAuz.security.annotation.AuthorizeList;
+import com.authAuz.authAuz.security.common.RequestContext;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -71,6 +72,7 @@ public class AuthorizeAspect {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (Objects.isNull(authentication) || !authentication.isAuthenticated()) {
             // throw new Unauthorized("unauthorized");
+            throw new SecurityException("unauthorized");
         }
     }
 
@@ -80,27 +82,31 @@ public class AuthorizeAspect {
                 .orElse(null));
 
         if (Objects.isNull(ctx)) {
-            throw new UnauthorizedException("unauthorized");
+            throw new RuntimeException("unauthorized");
         }
 
         for (String allowedScope : allowedScopes) {
             String[] allowedScopeParts = allowedScope.split(":");
 
-            if (allowedScopeParts[0].equalsIgnoreCase(ctx.getEntityType().toString())
+            if (allowedScopeParts[0].equalsIgnoreCase(ctx.getUserType().toString())
                     && (allowedScopeParts[1].equals("*")
-                            || allowedScopeParts[1].equalsIgnoreCase(ctx.getProvider().toString()))) {
+                            || allowedScopeParts[1].equalsIgnoreCase(ctx.getUserType().toString()))) {
                 return;
             }
 
         }
-        throw new ForbiddenException("forbidden", ctx.getEntityType(), ctx.getEntityId(), ctx.getProvider());
+        throw new RuntimeException(
+                "Authorization failed: {0} with ID: {1} attempted to perform an action on {2} api without the necessary permissions"
+                        + ctx.getUserType() + ctx.getUserId());
     }
 
     private boolean isAuthBypassedForEndpoint() {
-        List<String> NO_AUTH_EP = Optional.ofNullable(appConfig.getAuth())
-                .map(TaxExemptAppConfig.AuthConfiguration::getBypass)
-                .map(TaxExemptAppConfig.AuthConfiguration.BypassConfig::getEndpoints).orElse(List.of());
-        return NO_AUTH_EP.stream()
-                .anyMatch(ep -> pathMatcher.match(ep, request.getRequestURL().toString()));
+        // List<String> NO_AUTH_EP = Optional.ofNullable(appConfig.getAuth())
+        // .map(TaxExemptAppConfig.AuthConfiguration::getBypass)
+        // .map(TaxExemptAppConfig.AuthConfiguration.BypassConfig::getEndpoints).orElse(List.of());
+        // return NO_AUTH_EP.stream()
+        // .anyMatch(ep -> pathMatcher.match(ep, request.getRequestURL().toString()));
+
+        return false;
     }
 }
