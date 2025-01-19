@@ -17,7 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 
-import com.authauz.authauz.configuration.AppConfig;
+import com.authauz.authauz.configuration.AppConfigurationProperties;
 import com.authauz.authauz.security.annotation.Authorize;
 import com.authauz.authauz.security.annotation.AuthorizeList;
 import com.authauz.authauz.security.common.RequestContext;
@@ -30,10 +30,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthorizeAspect {
     private final HttpServletRequest request;
-    private final AppConfig appConfig;
+    private final AppConfigurationProperties properties;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
-    @Pointcut("@annotation(com.smaitic.tax.taxexempt.security.annotation.Authorize) || within(@org.springframework.web.bind.annotation.RestController *)")
+    @Pointcut("@annotation(com.authauz.authauz.security.annotation.Authorize) || within(@org.springframework.web.bind.annotation.RestController *)")
     public void authorizationPointcut() {
     }
 

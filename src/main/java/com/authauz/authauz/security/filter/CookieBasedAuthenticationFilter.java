@@ -9,7 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.authauz.authauz.configuration.AppConfig;
+import com.authauz.authauz.configuration.AppConfigurationProperties;
 import com.authauz.authauz.security.token.JwtAuthenticationToken;
 
 import jakarta.servlet.FilterChain;
@@ -22,10 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class CookieBasedAuthenticationFilter extends OncePerRequestFilter {
-    private AppConfig appConfig;
+    private AppConfigurationProperties appConfig;
     private AuthenticationManager authenticationManager;
 
-    public CookieBasedAuthenticationFilter(AuthenticationManager authenticationManager, AppConfig appConfig) {
+    public CookieBasedAuthenticationFilter(AuthenticationManager authenticationManager,
+            AppConfigurationProperties appConfig) {
         this.authenticationManager = authenticationManager;
         this.appConfig = appConfig;
     }

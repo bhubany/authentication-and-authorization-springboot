@@ -11,8 +11,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Component
-@ConfigurationProperties(prefix = "com.smaitic.tax.taxexempt")
-public class AppConfig {
+@ConfigurationProperties(prefix = "com.authauz.authauz")
+public class AppConfigurationProperties {
     private JwtConfiguration jwt;
     private CookieConfiguration cookie;
     private AuthConfiguration auth;
