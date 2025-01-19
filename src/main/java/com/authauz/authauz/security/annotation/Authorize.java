@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.authauz.authauz.security.common.AppScopes;
+import com.authauz.authauz.common.AppScopes;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

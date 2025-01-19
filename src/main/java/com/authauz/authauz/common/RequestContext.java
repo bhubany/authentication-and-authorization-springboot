@@ -1,4 +1,4 @@
-package com.authauz.authauz.security.common;
+package com.authauz.authauz.common;
 
 import java.util.UUID;
 
@@ -8,7 +8,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class RequestContext {
-    private UserType userType;
     private UUID userId;
+    private UserType userType;
+    private Role role;
     // we can add more as per our requirements
 }

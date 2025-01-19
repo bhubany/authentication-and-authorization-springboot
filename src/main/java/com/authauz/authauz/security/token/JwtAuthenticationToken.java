@@ -3,7 +3,7 @@ package com.authauz.authauz.security.token;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 
-import com.authauz.authauz.security.common.RequestContext;
+import com.authauz.authauz.common.RequestContext;
 
 import lombok.Getter;
 

@@ -9,8 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
+import com.authauz.authauz.common.RequestContext;
 import com.authauz.authauz.configuration.AppConfigurationProperties;
-import com.authauz.authauz.security.common.RequestContext;
 import com.authauz.authauz.security.token.JwtAuthenticationToken;
 import com.authauz.authauz.utils.JwtUtils;
 
@@ -33,10 +33,9 @@ public class JwtBasedAuthenticationProvider implements AuthenticationProvider {
         SecretKey secretKey = jwtUtils.generateSecretKey(appConfig.getJwt().getSecret());
         Claims claims = jwtUtils.getPayload(auth.getToken(), secretKey);
 
-        UUID authId = UUID.fromString(claims.getSubject());
-        UUID sellerLocationId = UUID.fromString(claims.getAudience().stream().toList().get(0));
+        UUID userId = UUID.fromString(claims.getAudience().stream().toList().get(0));
 
-        RequestContext principal = ctxBuilder.prepareContext(authId, sellerLocationId);
+        RequestContext principal = ctxBuilder.prepareContext(userId);
         return new JwtAuthenticationToken(token, principal);
     }
 
