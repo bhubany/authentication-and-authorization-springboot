@@ -1,3 +1,13 @@
 spring:
   application:
     name: authAuz
+
+com:
+  authAuz:
+    authAuz:
+      jwt:
+        secret: ++36xfSobeiERWDtfXGvtF1MTkxHITOKR0R8j/8OsTs=
+        expires-in: 900
+      cookie:
+        name: authToken
+        expires-in: 900
