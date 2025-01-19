@@ -11,19 +11,19 @@ public class UserService {
     }
 
     public String getUsers() {
-        return "getUsers";
+        return "Users retrieved successfully";
     }
 
     public String getUser(UUID id) {
-        return "user details with id: " + id;
+        return "User with id " + id + " retrieved successfully";
     }
 
     public String updateUser(UUID id) {
-        return "user with id: " + id + " updated successfully";
+        return "User with ID: " + id + " updated successfully";
     }
 
     public String deleteUser(UUID id) {
-        return "user with id: " + id + " deleted successfully";
+        return "User with ID: " + id + " deleted successfully";
     }
 
 }
