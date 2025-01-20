@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.authauz.authauz.common.AppScopes;
+import com.authauz.authauz.security.annotation.Authorize;
 import com.authauz.authauz.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("")
+    @Authorize(scope = AppScopes.CUSTOMER_ALL)
+    @Authorize(scope = AppScopes.SELLER_ADMIN)
     public ResponseEntity<Object> createUser() {
         var users = userService.getUsers();
         return ResponseEntity.ok(users);

@@ -73,14 +73,16 @@ public class AuthorizeAspect {
         Method method = signature.getMethod();
         List<String> allowedScopes = List.of();
 
-        // bypass systmem configured apis calls like swagger api docs
+        // Skip authorization checks for system endpoints (e.g., Swagger API docs)
         if (isAuthBypassedForEndpoint()) {
             return joinPoint.proceed();
         }
 
+        // Handle method-specific authorization based on annotations
         if (method.isAnnotationPresent(Authorize.class)) {
             Authorize authorize = method.getAnnotation(Authorize.class);
 
+            // If the @Authorize annotation specifies bypass, skip authorization
             if (authorize.bypass()) {
                 return joinPoint.proceed();
             }
@@ -88,33 +90,46 @@ public class AuthorizeAspect {
             allowedScopes = List.of(authorize.scope().getValue());
         } else if (method.isAnnotationPresent(AuthorizeList.class)) {
             AuthorizeList authorizeList = method.getAnnotation(AuthorizeList.class);
-            allowedScopes = Arrays.stream(authorizeList.value()).map(el -> el.scope().getValue())
+            allowedScopes = Arrays.stream(authorizeList.value())
+                    .map(el -> el.scope().getValue())
                     .collect(Collectors.toList());
         }
 
         handleAuthentication();
         handleAuthorization(allowedScopes);
-        return joinPoint.proceed();
 
+        return joinPoint.proceed();
     }
 
+    /**
+     * Verifies that the user is authenticated. If not, throws a SecurityException.
+     */
     private void handleAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (Objects.isNull(authentication) || !authentication.isAuthenticated()) {
-            // throw new Unauthorized("unauthorized");
+            // Authentication is not valid, throw an exception
             throw new SecurityException("unauthorized");
         }
     }
 
+    /**
+     * Verifies if the authenticated user has the necessary permissions (scopes)
+     * to access the requested resource. It compares the user's type and role
+     * with the allowed scopes and throws an exception if authorization fails.
+     * 
+     * @param allowedScopes The list of scopes required for the method.
+     */
     private void handleAuthorization(List<String> allowedScopes) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        RequestContext ctx = ((RequestContext) Optional.ofNullable(authentication).map(Authentication::getPrincipal)
-                .orElse(null));
+        RequestContext ctx = (RequestContext) Optional.ofNullable(authentication)
+                .map(Authentication::getPrincipal)
+                .orElse(null);
 
         if (Objects.isNull(ctx)) {
-            throw new RuntimeException("unauthorized");
+            throw new RuntimeException("Unauthorized: No user context found");
         }
 
+        // Check if the user has the necessary permissions for any of the allowed scopes
         for (String allowedScope : allowedScopes) {
             String[] allowedScopeParts = allowedScope.split(":");
 
@@ -123,17 +138,24 @@ public class AuthorizeAspect {
                             || allowedScopeParts[1].equalsIgnoreCase(ctx.getRole().toString()))) {
                 return;
             }
-
         }
-        throw new RuntimeException(
-                "Authorization failed: {0} with ID: {1} attempted to perform an action on {2} api without the necessary permissions"
-                        + ctx.getUserType() + ctx.getUserId());
+
+        // If no match is found, throw an authorization failure exception
+        throw new RuntimeException("Authorization failed: User " + ctx.getUserType() + " with ID: "
+                + ctx.getUserId() + " attempted to access an endpoint without the necessary permissions.");
     }
 
+    /**
+     * Checks if the current endpoint is exempt from authentication based on the
+     * configured list of bypassed endpoints in the application properties.
+     * 
+     * @return True if authentication should be bypassed for the current endpoint.
+     */
     private boolean isAuthBypassedForEndpoint() {
         List<String> NO_AUTH_EP = Optional.ofNullable(properties.getAuth())
                 .map(el -> properties.getAuth().getBypass())
-                .map(el -> properties.getAuth().getBypass().getEndpoints()).orElse(List.of());
+                .map(el -> properties.getAuth().getBypass().getEndpoints())
+                .orElse(List.of());
 
         return NO_AUTH_EP.stream()
                 .anyMatch(ep -> pathMatcher.match(ep, request.getRequestURL().toString()));
