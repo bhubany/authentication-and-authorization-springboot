@@ -108,7 +108,7 @@ public class AuthorizeAspect {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (Objects.isNull(authentication) || !authentication.isAuthenticated()) {
             // Authentication is not valid, throw an exception
-            throw new SecurityException("unauthorized");
+            throw new SecurityException("Unauthorized access: User is not authenticated");
         }
     }
 

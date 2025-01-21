@@ -31,24 +31,31 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
+    @Authorize(scope = AppScopes.SELLER_ADMIN)
+    @Authorize(scope = AppScopes.SELLER_MARKETING)
     @GetMapping("")
     public ResponseEntity<Object> getUsers() {
         var users = userService.getUsers();
         return ResponseEntity.ok(users);
     }
 
+    @Authorize(scope = AppScopes.SELLER_ALL)
     @GetMapping("/{id}")
     public ResponseEntity<Object> getUser(@PathVariable UUID id) {
         var users = userService.getUser(id);
         return ResponseEntity.ok(users);
     }
 
+    @Authorize(scope = AppScopes.CUSTOMER_ALL)
+    @Authorize(scope = AppScopes.SELLER_ADMIN)
+    @Authorize(scope = AppScopes.SELLER_CSR)
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateUser(@PathVariable UUID id) {
         var users = userService.updateUser(id);
         return ResponseEntity.ok(users);
     }
 
+    @Authorize(scope = AppScopes.SELLER_ADMIN)
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteUser(@PathVariable UUID id) {
         var users = userService.deleteUser(id);

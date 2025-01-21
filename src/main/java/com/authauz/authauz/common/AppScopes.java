@@ -2,6 +2,11 @@ package com.authauz.authauz.common;
 
 import lombok.Getter;
 
+/**
+ * Enum representing various application scopes.
+ * Scopes define the level of access and permissions within the application.
+ * New scopes can be added as required to match evolving authorization needs.
+ */
 @Getter
 public enum AppScopes {
     NONE(null),
