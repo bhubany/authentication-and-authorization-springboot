@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.authauz.authauz.configuration.AppConfigurationProperties;
 import com.authauz.authauz.dto.AuthRequest;
 import com.authauz.authauz.security.annotation.Authorize;
-import com.authauz.authauz.service.AuthService;
+import com.authauz.authauz.service.impl.AuthService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

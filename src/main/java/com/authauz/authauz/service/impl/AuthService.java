@@ -1,4 +1,4 @@
-package com.authauz.authauz.service;
+package com.authauz.authauz.service.impl;
 
 import java.util.HashMap;
 import java.util.Map;

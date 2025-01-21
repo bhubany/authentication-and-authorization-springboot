@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.authauz.authauz.common.AppScopes;
 import com.authauz.authauz.security.annotation.Authorize;
-import com.authauz.authauz.service.UserService;
+import com.authauz.authauz.service.impl.UserService;
 
 import lombok.RequiredArgsConstructor;
 
